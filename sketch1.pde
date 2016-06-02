@@ -3,18 +3,22 @@ int maxIndex = 8;
 float currentSz = 10;
 float maxSize = 40;
 float[] currentPos={0,0};
-
+float[] currentColor ={0,0,0};
 void setup()
 {
-  size(500,500);
+  size(displayWidth,displayHeight);
   background(0);
   currentPos[0]=width/2.f;
   currentPos[1]=height/2.f;
+//  currentColor = getColorForIndex(currentNum);
 }
 
 void draw()
 {
 //  background(0);
+colorMode(RGB,256);
+  fill(0,0,0,5);
+  rect(0,0,width,height);
   println("currentNum: " + currentNum);
   updateNum();
   updatePos();
@@ -23,8 +27,18 @@ void draw()
 
 void renderPos()
 {
-  int c = getColorForIndex(currentNum);
-  fill(c);
+
+  int newc = getColorForIndex(currentNum);
+  colorMode(RGB, 256);
+  float newR = red(newc);
+  float newG = green(newc);
+  float newB = blue(newc);
+//  println(newR + " " + newG + " " + newB);
+  currentColor[0] = lerp(currentColor[0],newR, .1);
+  currentColor[1] = lerp(currentColor[1],newG, .1);
+  currentColor[2] = lerp(currentColor[2],newB, .1);
+  int newColor = color(currentColor[0],currentColor[1],currentColor[2],256);
+  fill(newColor);
   noStroke();
   ellipse(currentPos[0],currentPos[1],currentSz,currentSz);
 }
