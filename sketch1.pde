@@ -1,7 +1,11 @@
+import oscP5.*;
+OscP5 oscP5;
+
 int currentNum = 0;
+long bCounter = 0;
 int maxIndex = 8;
 float currentSz = 10;
-float maxSize = 40;
+float maxSize = 20;
 float[] currentPos={0,0};
 float[] currentColor ={0,0,0};
 void setup()
@@ -11,14 +15,16 @@ void setup()
   currentPos[0]=width/2.f;
   currentPos[1]=height/2.f;
 //  currentColor = getColorForIndex(currentNum);
+
+oscP5 = new OscP5(this,7400);
 }
 
 void draw()
 {
 //  background(0);
 colorMode(RGB,256);
-  fill(0,0,0,5);
-  rect(0,0,width,height);
+//  fill(0,0,0,5);
+//  rect(0,0,width,height);
   
   updateNum();
   updatePos();
@@ -27,7 +33,6 @@ colorMode(RGB,256);
 
 void renderPos()
 {
-
   int newc = getColorForIndex(currentNum);
   colorMode(RGB, 256);
   float newR = red(newc);
@@ -52,8 +57,9 @@ void updatePos()
   d = 1-d;
   float newSz = d*maxSize;
   currentSz =  lerp(currentSz,newSz,.5);
-  currentPos[0] = lerp(currentPos[0],tmp[0],.05);
-  currentPos[1] = lerp(currentPos[1],tmp[1],.05);
+  float lerpAmt = .2;
+  currentPos[0] = lerp(currentPos[0],tmp[0],lerpAmt);
+  currentPos[1] = lerp(currentPos[1],tmp[1],lerpAmt);
 }
 
 
@@ -79,8 +85,29 @@ void updateNum()
   if(millis() > nextUpdate)
   {
     currentNum = (int)(random(maxIndex));
-    println("currentNum: " + currentNum);
+//    println("currentNum: " + currentNum);
     nextUpdate += updateFrequency;
+  }
+}
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  /* print the address pattern and the typetag of the received OscMessage */
+  print("### received an osc message.");
+  print(" addrpattern: "+theOscMessage.addrPattern());
+  println(" typetag: "+theOscMessage.typetag());
+  if(theOscMessage.checkTypetag("ff"))
+  {
+    float brainNumber = theOscMessage.get(0).floatValue();
+    float counter = theOscMessage.get(1).floatValue();
+//    int firstValue = theOscMessage.get(0).fl();  
+  currentNum = (int)(brainNumber);
+  bCounter = (int)(counter);
+  println("brainNumber: " + brainNumber + " counter: " + counter);
+  println("currentNum: " + currentNum);
+  }
+  else
+  {
+    println("recieved invalid format");
   }
 }
 
