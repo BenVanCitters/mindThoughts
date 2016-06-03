@@ -19,7 +19,7 @@ void draw()
 colorMode(RGB,256);
   fill(0,0,0,5);
   rect(0,0,width,height);
-  println("currentNum: " + currentNum);
+  
   updateNum();
   updatePos();
   renderPos();
@@ -66,17 +66,20 @@ int getColorForIndex(int index)
 float[] getPositionForIndex(int index)
 {
   float rad = (index*1.f/8)*TWO_PI;
-  return new float[]{(width/2.f) * (1+cos(rad)), 
-                     (height/2.f) * (1+sin(rad)) };
+//  return new float[]{(width/2.f) * (1+cos(rad)), 
+//                     (height/2.f) * (1+sin(rad)) };
+   return new float[]{(width/2.f) + (width/2.f-maxSize/2) *cos(rad), 
+                      (height/2.f) + (height/2.f-maxSize/2) *sin(rad) };
 }
 
-long updateFrequency = 1000;
+long updateFrequency = 500;
 long nextUpdate = millis()+updateFrequency;
 void updateNum()
 {
   if(millis() > nextUpdate)
   {
     currentNum = (int)(random(maxIndex));
+    println("currentNum: " + currentNum);
     nextUpdate += updateFrequency;
   }
 }
